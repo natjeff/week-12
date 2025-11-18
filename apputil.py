@@ -6,8 +6,23 @@ import matplotlib.pyplot as plt
 
 
 def update_board(current_board):
-    # your code here ...
-    updated_board = current_board
+    """
+    Executes one step of Conway's Game of Life on a binary NumPy array.
+    Returns updated board after applying Game of Life rules.
+    """
+    # Pad edges to get counted correctly
+    padded = np.pad(current_board, pad_width=1, mode='constant', constant_values=0)
+    neighbors = (
+        padded[:-2, :-2] + padded[:-2, 1:-1] + padded[:-2, 2:] +     # upper row
+        padded[1:-1, :-2] +                    padded[1:-1, 2:] +    # mid row (left, right)
+        padded[2:, :-2] + padded[2:, 1:-1] + padded[2:, 2:]          # bottom row
+    )
+
+    # Apply rules and update board
+    birth = (neighbors == 3) & (current_board == 0)
+    survive = ((neighbors == 2) | (neighbors == 3)) & (current_board == 1)
+    updated_board = np.zeros_like(current_board)
+    updated_board[birth | survive] = 1
 
     return updated_board
 
